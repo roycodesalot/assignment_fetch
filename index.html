@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TV Show Search</title>
+        <link rel="stylesheet" href="style.css">
+        <script defer src="script.js"></script>
+    
+    </head>
+    <body>
+        <form id="tv_form">
+            <h1>TV Show Search</h1>
+            <label for="tv_title">Search TV Show:</label><br>
+            <input type="text" id="tv_title" name="tv_title" placeholder="Enter TV show title">
+
+            <button onclick="fetchData()" type="button" id="searchButton">Search</button>
+        </form>
+        <ul id="tv_list"></ul>
+
+    </body>
+</html>

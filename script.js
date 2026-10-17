@@ -1,62 +1,74 @@
 // script.js
 let form = document.getElementById("tv_form");
 let searchButton = document.getElementById("searchButton");
-// Add an event listener to the search button to trigger the form submission
+
+// clear the error and submit the form when clicking search button
 searchButton.addEventListener("click", function () {
     form.dispatchEvent(new Event("submit"));
 });
-// Add an event listener to the form submission
+
+// handle what happens when the form is submitted
 form.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    const limit = 10; // Limit the number of results to 10
+    // global cleanup: clear old cards and old errors right away
+    let tvList = document.getElementById("tv_list");
+    let errorDisplay = document.getElementById("error_message");
+    tvList.innerHTML = "";
+    errorDisplay.textContent = "";
+
+    const limit = 10; // limit the number of results to 10
 
     let tvTitle = document.getElementById("tv_title").value;
     let result = tvTitle.trim();
-    //empty search check
-    if (result == "") {
-        document.getElementById("error_message").textContent = "Enter TV Show";
 
+    // empty search check
+    if (result == "") {
+        errorDisplay.textContent = "Enter TV Show";
         return null;
     }
 
+    // fetch the show data from tvmaze api
     fetch(
         `https://api.tvmaze.com/search/shows?q=${encodeURIComponent(tvTitle)}`,
     )
-        // Handle the response from the API
+        // handle the response from the API
         .then((response) => {
-            // Check if the response is ok
+            // handle too many requests rate limit error specifically
+            if (response.status === 429) {
+                throw new Error("Rate limit exceeded. Please wait and try again later.");
+            }
+            // check if the response is ok
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
             return response.json();
         })
         .then((data) => {
-            //error message if nothing is enter
+            // error message if nothing is found from the search
             if (data.length == 0) {
-                document.getElementById("error_message").textContent =
-                    "No Show Found";
-
+                errorDisplay.textContent = "No Show Found";
                 return null;
             }
-            let tvList = document.getElementById("tv_list");
-            tvList.innerHTML = "";
+
             data.slice(0, limit).forEach((item) => {
-                // Create a list item for each TV show and append it to the list
+                // create a list item for each TV show and append it to the list
                 let li = document.createElement("li");
                 li.textContent = item.show.name;
                 tvList.appendChild(li);
-                // Check if the show has an image and append it to the list item
+
+                // check if the show has an image and append it to the list item
                 if (item.show.image && item.show.image.medium) {
                     let img = document.createElement("img");
                     img.src = item.show.image.medium;
                     img.alt = item.show.name + " poster";
                     li.appendChild(img);
                 }
-                //chekcing summary
+
+                // checking summary
                 if (item.show && item.show.summary) {
                     let text = item.show.summary;
-                    let result = text.replace(/<[^>]*>/g, "");
+                    let result = text.replace(/<[^>]*>/g, ""); // strip html tags out of summary
 
                     const para = document.createElement("p");
                     para.textContent = result;
@@ -66,7 +78,8 @@ form.addEventListener("submit", function (event) {
                     para.textContent = "Not Available";
                     li.appendChild(para);
                 }
-                //premiere block
+
+                // premiere block
                 if (item.show.premiered) {
                     const para = document.createElement("p");
                     para.textContent = item.show.premiered;
@@ -76,13 +89,14 @@ form.addEventListener("submit", function (event) {
                     para.textContent = "Not Available";
                     li.appendChild(para);
                 }
-                //setting the date anf time
+
+                // setting the date and time
                 if (item.show.updated) {
                     let milsec = item.show.updated * 1000;
                     const time = new Date(milsec);
                     let sec = time.toLocaleString();
 
-                     const para = document.createElement("p");
+                    const para = document.createElement("p");
                     para.textContent = sec;
                     li.appendChild(para);
                 } else {
@@ -91,7 +105,7 @@ form.addEventListener("submit", function (event) {
                     li.appendChild(para);
                 }
 
-                //genres
+                // genres block
                 const genrePara = document.createElement("p");
                 if (item.show.genres && item.show.genres.length > 0) {
                     genrePara.textContent = item.show.genres.join(", ");
@@ -100,7 +114,7 @@ form.addEventListener("submit", function (event) {
                 }
                 li.appendChild(genrePara);
 
-                //average rating
+                // average rating block
                 const ratePara = document.createElement('p');
                 if (item.show.rating && item.show.rating.average){
                     ratePara.textContent = item.show.rating.average;
@@ -109,7 +123,7 @@ form.addEventListener("submit", function (event) {
                 }
                 li.appendChild(ratePara);
 
-                //tvmaze link
+                // tvmaze link block
                 const hreflink = document.createElement("a");
                 if (item.show.url) {
                     hreflink.href = item.show.url;
@@ -123,7 +137,7 @@ form.addEventListener("submit", function (event) {
                     li.appendChild(para);
                 }
 
-                //For the search cast api
+                // fetch the cast details for the current show card
                 fetch(`https://api.tvmaze.com/shows/${item.show.id}/cast`)
                     .then((response) => {
                         if (!response.ok) {
@@ -132,6 +146,7 @@ form.addEventListener("submit", function (event) {
                         return response.json();
                     })
                     .then((cast) => {
+                        // checking if cast list exists and limit to top 5 members
                         if (cast.length > 0) {
                             let castList = document.createElement("ul");
                             cast.slice(0, 5).forEach((member) => {
@@ -145,27 +160,33 @@ form.addEventListener("submit", function (event) {
                             card.textContent = "Not Available";
                             li.appendChild(card);
                         }
+                    })
+                    .catch((castError) => {
+                        // catch standalone failures for cast fetch
+                        console.error("Cast Error:", castError);
+                        const card = document.createElement("p");
+                        card.textContent = "Cast Not Available";
+                        li.appendChild(card);
                     });
             });
         })
         .catch((error) => {
+            // display connection errors or custom messages like 429
             console.error("Error:", error);
-            document.getElementById("error_message").textContent =
-                "An error occurred while fetching TV show data.";
+            document.getElementById("error_message").textContent = error.message;
         });
 });
 
-// Function to initialize the search input and trigger the search on page load
+// function to initialize the search input and trigger the search on page load
 function initialize() {
     let searchInput = document.getElementById("tv_title");
-    // Set the default value of the search input to a specific URL
-    searchInput.value = "Horror"; // You can change this to any default search term you want
-    // Trigger the search when the page loads
+    // set default search value to Horror when page first loads
+    searchInput.value = "Horror"; 
     form.dispatchEvent(new Event("submit"));
 }
-// Add an event listener to the search input to clear the error message when the user starts typing
+
+// clear the error message as soon as the user begins typing something new
 let searchInput = document.getElementById("tv_title");
 searchInput.addEventListener("input", function () {
-    // Clear the error message when the user starts typing
     document.getElementById("error_message").textContent = "";
 });

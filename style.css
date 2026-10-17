@@ -72,16 +72,17 @@ body {
     height: 20px;
 }
 
-/* column row base grid alignment */
+/* FIX: swapped from grid to flex container with wrapping */
 #tv_list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 30px;
+    justify-content: center;
     list-style: none;
     padding: 0;
 }
 
-/* card container boxes design layout */
+/* FIX: merged rules together to avoid overriding values */
 #tv_list > li {
     background: white; 
     border: 1px solid lightgray; 
@@ -89,11 +90,8 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
+    width: 280px;
     font-size: 14px;
-}
-
-/* show headline naming size adjustment */
-#tv_list > li {
     font-size: 18px;
     font-weight: 600;
     color: black; 
@@ -112,6 +110,8 @@ body {
 
 /* single text details blocks separation */
 #tv_list > li p {
+    font-size: 14px;
+    font-weight: normal;
     margin-bottom: 6px;
     color: black; 
 }
@@ -146,12 +146,16 @@ body {
 }
 
 #tv_list > li ul li {
+    font-size: 14px;
+    font-weight: normal;
     color: grey; 
     padding: 2px 0;
 }
 
 /* external page link navigation block */
 #tv_list > li a {
+    font-size: 14px;
+    font-weight: 500;
     display: block;
     text-align: center;
     background-color: lightgray; 
@@ -159,7 +163,6 @@ body {
     text-decoration: none;
     padding: 8px;
     border-radius: 4px;
-    font-weight: 500;
     margin-top: auto;
 }
 

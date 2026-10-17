@@ -1,0 +1,194 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: lightgrey;
+    color: red;
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* form and text box wrapper setup */
+#tv_form {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+#tv_form h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: black;
+}
+
+#tv_form label {
+    font-size: 14px;
+    color: grey;
+}
+
+/* main input text box details */
+#tv_title {
+    width: 300px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    border: 1px solid lightgray;
+    border-radius: 6px 0 0 6px;
+    font-size: 15px;
+    outline: none;
+}
+
+#tv_title:focus {
+    border-color: blue;
+}
+
+/* submit action button adjustments */
+#searchButton {
+    padding: 10px 20px;
+    background-color: blue; 
+    color: white;           
+    border: 1px solid blue;
+    border-radius: 0 6px 6px 0;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#searchButton:hover {
+    background-color: darkblue; 
+    border-color: darkblue;
+}
+
+/* empty search text alert placement */
+#error_message {
+    color: red; 
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+    height: 20px;
+}
+
+/* column row base grid alignment */
+#tv_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    list-style: none;
+    padding: 0;
+}
+
+/* card container boxes design layout */
+#tv_list > li {
+    background: white; 
+    border: 1px solid lightgray; 
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+/* show headline naming size adjustment */
+#tv_list > li {
+    font-size: 18px;
+    font-weight: 600;
+    color: black; 
+    margin-bottom: 12px;
+}
+
+/* media display image dimensions constraint */
+#tv_list > li img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+}
+
+/* single text details blocks separation */
+#tv_list > li p {
+    margin-bottom: 6px;
+    color: black; 
+}
+
+/* description preview alignment adjustment */
+#tv_list > li p:nth-of-type(1) {
+    color: black; 
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+/* dynamic labels styling hook rules */
+#tv_list > li p:nth-of-type(2)::before { content: "Premiered: "; font-weight: 600; }
+#tv_list > li p:nth-of-type(3)::before { content: "Updated: "; font-weight: 600; }
+#tv_list > li p:nth-of-type(4)::before { content: "Genres: "; font-weight: 600; }
+#tv_list > li p:nth-of-type(5)::before { content: "Rating: "; font-weight: 600; }
+
+/* secondary lists cast details outline wrapper */
+#tv_list > li ul {
+    list-style: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed lightgray; 
+}
+
+#tv_list > li ul::before {
+    content: "Cast";
+    display: block;
+    font-weight: 600;
+    color: black; 
+    margin-bottom: 4px;
+}
+
+#tv_list > li ul li {
+    color: grey; 
+    padding: 2px 0;
+}
+
+/* external page link navigation block */
+#tv_list > li a {
+    display: block;
+    text-align: center;
+    background-color: lightgray; 
+    color: blue;                 
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-top: auto;
+}
+
+#tv_list > li a:hover {
+    background-color: gray; 
+    color: white;
+}
+
+/* source citation credits placement section */
+footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid lightgray; 
+    text-align: center;
+    font-size: 13px;
+    color: grey; 
+}
+
+footer a {
+    color: blue; 
+    text-decoration: none;
+}
+
+/* mobile adaptive screen query overrides */
+@media (max-width: 600px) {
+    #tv_title {
+        width: 65%;
+    }
+    #searchButton {
+        width: 30%;
+    }
+}
